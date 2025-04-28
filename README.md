@@ -1,4 +1,4 @@
-# EXPERIMENT--05-INTERFACING-A-4X4-MATRIX-KEYPAD-AND-DISPLAY-THE-OUTPUT-ON-LCD
+# Ex.No-05-EXPERIMENT--05-INTERFACING-A-4X4-MATRIX-KEYPAD-AND-DISPLAY-THE-OUTPUT-ON-LCD
 
 ## Aim: 
 To Interface a 4X4 matrix keypad and show the output on 16X2 LCD display to ARM controller , and simulate it in Proteus
@@ -179,16 +179,89 @@ https://engineeringxpert.com/wp-content/uploads/2022/04/26.png
 
 ## CIRCUIT DIAGRAM 
  
+![image](https://github.com/user-attachments/assets/c81b8a76-ae5c-465d-993b-b9cabbdb4e98)
 
 ## STM 32 CUBE PROGRAM :
+```
+#include "main.h"
+#include "lcd.h"
+#include <stdbool.h>
 
+bool col1, col2, col3, col4;
+
+void SystemClock_Config(void);
+static void MX_GPIO_Init(void);
+
+void key(void);
+Lcd_PortType ports[] = {GPIOA, GPIOA, GPIOA, GPIOA};
+Lcd_PinType pins[] = {GPIO_PIN_3, GPIO_PIN_2, GPIO_PIN_1, GPIO_PIN_0};
+Lcd_HandleTypeDef lcd;
+
+int main(void)
+{
+    HAL_Init();
+    SystemClock_Config();
+    MX_GPIO_Init();
+
+    lcd = Lcd_create(ports, pins, GPIOB, GPIO_PIN_0, GPIOB, GPIO_PIN_1, LCD_4_BIT_MODE);
+
+    while (1)
+    {
+        key();
+    }
+}
+
+void key()
+{
+    // Use the global lcd instance
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_0, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_2, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_3, GPIO_PIN_SET);
+
+    col1 = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_4);
+    col2 = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_5);
+    col3 = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_6);
+    col4 = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_7);
+
+    Lcd_cursor(&lcd, 0, 0); // Set to valid position
+
+    if (!col1)
+    {
+        Lcd_string(&lcd, "key 7 ");
+        HAL_Delay(1000);
+    }
+    else if (!col2)
+    {
+        Lcd_string(&lcd, "key 8 ");
+        HAL_Delay(1000);
+    }
+    else if (!col3)
+    {
+        Lcd_string(&lcd, "key 9 ");
+        HAL_Delay(1000);
+    }
+    else if (!col4)
+    {
+        Lcd_string(&lcd, "key % ");
+        HAL_Delay(1000);
+    }
+}
+```
 
 
 ## Output screen shots of proteus  :
- 
- 
+on condition:
+
+![image](https://github.com/user-attachments/assets/8610df74-1bcc-4504-aef2-43cc4cd3957d)
+
+off condition:
+
+![image](https://github.com/user-attachments/assets/d3818b0a-10f0-4f14-b553-04497c3af401)
+
  ## CIRCUIT DIAGRAM (EXPORT THE GRAPHICS TO PDF AND ADD THE SCREEN SHOT HERE): 
- 
+ ![image](https://github.com/user-attachments/assets/4c22b48c-2d8a-4545-821e-6de6b84de58c)
+
  
 ## Result :
 Interfacing a 4x4 keypad with ARM microcontroller are simulated in proteus and the results are verified.
